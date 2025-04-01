@@ -92,8 +92,10 @@ void Quad::retrieve(const Point& viewTopLeft, const Point& viewBotRight, std::ve
     }
 
     for (auto* obj : objs) {
-        if (obj->x >= viewTopLeft.x && obj->x <= viewBotRight.x &&
-            obj->y >= viewTopLeft.y && obj->y <= viewBotRight.y) {
+        if (obj->x >= viewTopLeft.x && 
+            obj->y >= viewTopLeft.y && 
+            obj->y <= viewBotRight.y &&
+            obj->x <= viewBotRight.x) {
             foundObjects.push_back(obj);
         }
     }

@@ -17,7 +17,7 @@ void CSimon::Update(DWORD dt)
 	vy += SIMON_GRAVITY * dt;
 
 	// Kiểm tra va chạm với mặt đất
-	if (y > GROUND_Y)
+	if (y > GROUND_Y && x >= -1000 && x < 1000)
 	{
 		vy = 0; y = GROUND_Y;
 	}
