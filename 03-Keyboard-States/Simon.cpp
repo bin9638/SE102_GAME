@@ -1,7 +1,88 @@
 ﻿#include "Simon.h"
-
+#include "Weapon.h"
+#include <vector>
 void CSimon::Update(DWORD dt)
 {
+	if (isAttacking)
+	{ 
+		////DebugOut(L"[INFO] KeyDown: %d %d\n", x, y);
+		if (weapons.empty())
+		{
+			CWeapon* w = new CWeapon(x, y);
+			weapons.push_back(w);
+		}
+		for (auto* weapon : weapons)
+		{
+			float dx[5], dy[5];
+			switch (state)
+			{
+			case ID_ANI_SIMON_STAND_ATTACK_RIGHT:
+				dx[0] = -15; dy[0] = 4;
+				dx[1] = -7; dy[1] = 1;
+				dx[2] = 20; dy[2] = -5;
+				break;
+			case ID_ANI_SIMON_STAND_ATTACK_LEFT:
+				dx[0] = 12; dy[0] = 4;
+				dx[1] = 7; dy[1] = 1;
+				dx[2] = -20; dy[2] = -5;
+				break;
+			case ID_ANI_SIMON_SIT_ATTACK_RIGHT:
+				dx[0] = -15; dy[0] = 6;
+				dx[1] = -5; dy[1] = 5;
+				dx[2] = 23; dy[2] = -2;
+				break;
+			case ID_ANI_SIMON_SIT_ATTACK_LEFT:
+				dx[0] = 13; dy[0] = 6;
+				dx[1] = 5; dy[1] = 5;
+				dx[2] = -22; dy[2] = -2;
+				break;
+			default:
+				dx[0] = 14; dy[0] = 2;
+				dx[1] = 0; dy[1] = 1;
+				dx[2] = -20; dy[2] = -5;
+				break;
+			}
+			if (nx > 0)
+			{
+				dx[0] = -15; dy[0] = 4;
+				dx[1] = -7; dy[1] = 1;
+				dx[2] = 20; dy[2] = -5;
+			}
+
+			float progress = 1.0f - (float)attackTime / 900.0f;
+			int frame = min((int)(progress * 3), 2);
+			weapon->SetDxDy(x + dx[frame], y + dy[frame]);
+			/*switch (state)
+			{
+			case ID_ANI_SIMON_STAND_ATTACK_RIGHT:
+				weapon->SetDxDy(x + DIS, y);
+				break;
+			case ID_ANI_SIMON_STAND_ATTACK_LEFT:
+				weapon->SetDxDy(x - DIS, y);
+				break;
+			case ID_ANI_SIMON_SIT_ATTACK_RIGHT:
+				weapon->SetDxDy(x + DIS, y);
+				break;
+			case ID_ANI_SIMON_SIT_ATTACK_LEFT:
+				weapon->SetDxDy(x - DIS, y);
+				break;
+			default:
+				if (nx > 0)
+					weapon->SetDxDy(x + DIS, y);
+				else
+					weapon->SetDxDy(x - DIS, y);
+				break;
+			}*/
+		}
+	}
+	else
+	{
+		while(!weapons.empty())
+		{
+			delete weapons.back();
+			weapons.pop_back();
+		}
+	}
 	if (isAttacking)
 	{
 		attackTime -= dt;
@@ -32,7 +113,8 @@ void CSimon::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();
 	int aniId = -1;
-
+	for (auto* weapon : weapons)
+		weapon->Render(isAttacking, nx);
 	// Kiểm tra nếu Simon đang trên không
 	if (y < GROUND_Y)
 	{

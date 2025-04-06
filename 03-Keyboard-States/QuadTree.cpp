@@ -8,17 +8,17 @@ Quad::Quad(int _level, Point _topL, Point _botR)
 }
 
 Quad::~Quad() {
+    for (auto* obj : objs) {
+        delete obj;
+    }
+
     delete topLeftTree;
     delete topRightTree;
     delete botLeftTree;
     delete botRightTree;
-    
-    for (auto* obj : objs) {
-        delete obj;
-    }
 }
 
-void Quad::split() {
+void Quad::devide() {
     int midX = (topLeft.x + botRight.x) / 2;
     int midY = (topLeft.y + botRight.y) / 2;
 
@@ -56,10 +56,26 @@ void Quad::insert(CGameObject* obj) {
         std::vector<int> indices = getIndices(obj);
         for (int index : indices) {
             switch (index) {
-            case 0: topLeftTree->insert(obj); break;
-            case 1: topRightTree->insert(obj); break;
-            case 2: botLeftTree->insert(obj); break;
-            case 3: botRightTree->insert(obj); break;
+            case 0:
+            {
+                topLeftTree->insert(obj);
+                break;
+            }
+            case 1:
+            {
+                topRightTree->insert(obj);
+                break;
+            }
+            case 2:
+            {
+                botLeftTree->insert(obj);
+                break;
+            }
+            case 3:
+            {
+                botRightTree->insert(obj);
+                break;
+            }
             }
         }
         return;
@@ -68,7 +84,7 @@ void Quad::insert(CGameObject* obj) {
     objs.push_back(obj);
 
     if (objs.size() > MAX_OBJECTS && level < MAX_LEVELS) {
-        split();
+        devide();
         for (auto* obj : objs) {
             std::vector<int> indices = getIndices(obj);
             for (int index : indices) {
@@ -123,8 +139,8 @@ void Quad::Render() {
     int screenHeight = game->GetBackBufferHeight();
 
     std::vector<CGameObject*> res;
-    retrieve(Point(max(0.0f, cx - 50), max(0.0f, cy - 50)),
-        Point(cx + screenWidth + 50, 50 + cy + screenHeight), res);
+    retrieve(Point(max(0.0f, cx - 25), max(0.0f, cy - 25)),
+        Point(cx + screenWidth + 25, 25 + cy + screenHeight), res);
 
     for (auto* obj : res) {
         obj->Render();

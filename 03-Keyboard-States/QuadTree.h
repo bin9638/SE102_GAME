@@ -27,11 +27,11 @@ private:
     const int MAX_LEVELS = 5;
     int level;
 public:
-    std::vector<CGameObject*> objs;
+    vector<CGameObject*> objs;
     Quad(int _level, Point _topL, Point _botR);
     ~Quad();
-    void split();
-    std::vector<int> getIndices(CGameObject* obj) const;
+    void devide();
+    vector<int> getIndices(CGameObject* obj) const;
     void insert(CGameObject* obj);
     void retrieve(const Point& viewTopLeft, const Point& viewBotRight, std::vector<CGameObject*>& foundObjects);
     void Update(DWORD dt);

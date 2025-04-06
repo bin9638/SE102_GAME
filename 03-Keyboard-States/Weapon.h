@@ -28,7 +28,8 @@ protected:
 public:
 	CWeapon(float x, float y) : CGameObject(x, y) { }
 	void Update(DWORD dt);
+	void Render(int isAttacking, int nx);
 	void Render();
-	void SetDxDy(int state);
+	void SetDxDy(float X, float Y);
 };	
 

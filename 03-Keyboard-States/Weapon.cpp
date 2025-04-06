@@ -1,15 +1,15 @@
 ﻿#include "Weapon.h"
 
 #include "Mario.h"
-#include "Simon.h"
+//#include "Simon.h"
 
 extern CMario* mario;
-extern CSimon* simon;
+//extern CSimon* simon;
 
 void CWeapon::Update(DWORD dt)
 {
 	// Nếu Simon không tấn công, ẩn vũ khí
-	if (!simon->isAttacking)
+	/*if (!simon->isAttacking)
 	{
 		x = -1000;
 		y = -1000;
@@ -22,25 +22,39 @@ void CWeapon::Update(DWORD dt)
 
 	SetDxDy(simon->currentId);
 	x = simon->x + dx[frame];
-	y = simon->y + dy[frame];
+	y = simon->y + dy[frame];*/
 }
 
 void CWeapon::Render()
 {
+
+}
+
+void CWeapon::Render(int isAttacking, int nx)
+{
 	CAnimations* animations = CAnimations::GetInstance();
 	int aniId = -1;
-	if (simon->isAttacking) {
-		if (simon->nx < 0) aniId = ID_ANI_WEAPON_LEFT;
+	if (isAttacking) {
+		if (nx < 0) aniId = ID_ANI_WEAPON_LEFT;
 		else aniId = ID_ANI_WEAPON_RIGHT;
 	}
 	else
+	{
+		y = 1000;
 		aniId = ID_ANI_WEAPON_IDLE;
-
+	}
+	//DebugOut(L"[INFO] KeyDown: %d %d\n", isAttacking, aniId);
 	animations->Get(aniId)->Render(x, y);
+
+	/*DebugOut(L"[INFO] KeyDown: %d %d\n", x, y);
+	CAnimations* animations = CAnimations::GetInstance();
+	int aniId = -1;
+	aniId = ID_ANI_WEAPON_LEFT;
+	animations->Get(aniId)->Render(x, y);*/ 
 }
 
-void CWeapon::SetDxDy(int state = simon->currentId) {
-	if (!simon->isAttacking) return;
+void CWeapon::SetDxDy(float X, float Y) {
+	/*if (!simon->isAttacking) return;
 	switch (state)
 	{
 	case ID_ANI_SIMON_STAND_ATTACK_RIGHT:
@@ -68,5 +82,8 @@ void CWeapon::SetDxDy(int state = simon->currentId) {
 		dx[1] = 0; dy[1] = 1;
 		dx[2] = -20; dy[2] = -5;
 		break;
-	}
+	}*/
+	x = X;
+	y = Y;
+	//DebugOut(L"[INFO] KeyDown: %d %d\n", X, Y);
 }

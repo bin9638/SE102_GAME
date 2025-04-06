@@ -374,8 +374,8 @@ void LoadResources()
 		ani->Add(20211);
 		animations->Add(ID_ANI_WEAPON_IDLE, ani);
 
-		weapon = new CWeapon(SIMON_START_X, SIMON_START_Y);
-		objects.push_back(weapon);
+	//	weapon = new CWeapon(SIMON_START_X, SIMON_START_Y);
+	//	objects.push_back(weapon);
 	}
 
 	{

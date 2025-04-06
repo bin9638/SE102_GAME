@@ -30,6 +30,7 @@
 #pragma endregion
 
 #pragma region ANIMATION_ID
+#define DIS 13
 
 #define ID_ANI_SIMON_IDLE_RIGHT         2400
 #define ID_ANI_SIMON_IDLE_LEFT          2401
@@ -60,6 +61,7 @@ protected:
 	BOOLEAN isAttacking;
 	int attackTime;
 	int currentId;
+	vector<CWeapon*>weapons;
 public:
 	friend class CWeapon;
 	CSimon(float x, float y) : CGameObject(x, y) {
