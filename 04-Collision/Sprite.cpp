@@ -1,4 +1,4 @@
-#include "Sprite.h"
+ï»¿#include "Sprite.h"
 
 CSprite::CSprite(int id, int left, int top, int right, int bottom, LPTEXTURE tex)
 {
@@ -9,20 +9,17 @@ CSprite::CSprite(int id, int left, int top, int right, int bottom, LPTEXTURE tex
 	this->bottom = bottom;
 	this->texture = tex;
 
-	float texWidth = (float)tex->getWidth();
-	float texHeight = (float)tex->getHeight();
-
-	// Set the sprite’s shader resource view
+	// Set the spriteï¿½s shader resource view
 	sprite.pTexture = tex->getShaderResourceView();
 
-	sprite.TexCoord.x = this->left / texWidth;
-	sprite.TexCoord.y = this->top / texHeight;
+	sprite.TexCoord.x = this->left / (float)tex->getWidth();
+	sprite.TexCoord.y = this->top / (float)tex->getHeight();
 
 	int spriteWidth = (this->right - this->left + 1);
 	int spriteHeight = (this->bottom - this->top + 1);
 
-	sprite.TexSize.x = spriteWidth / texWidth;
-	sprite.TexSize.y = spriteHeight / texHeight;
+	sprite.TexSize.x = spriteWidth / (float)tex->getWidth();
+	sprite.TexSize.y = spriteHeight / (float)tex->getHeight();
 
 	sprite.ColorModulate = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	sprite.TextureIndex = 0;
@@ -34,13 +31,13 @@ void CSprite::Draw(float x, float y)
 {
 	CGame* g = CGame::GetInstance();
 	float cx, cy;
-	g->GetCamPos(cx, cy);
+	g->GetCamera()->GetPosition(cx, cy);
 
 	cx = (FLOAT)floor(cx);
 	cy = (FLOAT)floor(cy);
 
 	D3DXMATRIX matTranslation;
-	
+
 	x = (FLOAT)floor(x);
 	y = (FLOAT)floor(y);
 

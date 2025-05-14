@@ -1,5 +1,4 @@
 #include "Animation.h"
-#include "debug.h"
 
 void CAnimation::Add(int spriteId, DWORD time)
 {
@@ -7,9 +6,6 @@ void CAnimation::Add(int spriteId, DWORD time)
 	if (time == 0) t = this->defaultTime;
 
 	LPSPRITE sprite = CSprites::GetInstance()->Get(spriteId);
-	if (sprite == NULL)
-		DebugOut(L"[ERROR] Sprite ID %d not found!\n", spriteId);
-
 	LPANIMATION_FRAME frame = new CAnimationFrame(sprite, t);
 	frames.push_back(frame);
 }
@@ -30,6 +26,7 @@ void CAnimation::Render(float x, float y)
 			currentFrame++;
 			lastFrameTime = now;
 			if (currentFrame == frames.size()) currentFrame = 0;
+			//DebugOut(L"now: %d, lastFrameTime: %d, t: %d\n", now, lastFrameTime, t);
 		}
 
 	}
@@ -37,3 +34,13 @@ void CAnimation::Render(float x, float y)
 	frames[currentFrame]->GetSprite()->Draw(x, y);
 }
 
+void CAnimation::Reset()
+{
+	currentFrame = -1;
+	lastFrameTime = -1;
+}
+
+int CAnimation::GetCurrentFrame()
+{
+	return currentFrame;
+}

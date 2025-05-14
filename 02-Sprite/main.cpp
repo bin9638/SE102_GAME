@@ -26,13 +26,7 @@
 
 
 #include "Mario.h"
-#include "Enemy.h"
-#include "Bat.h"
-#include "Ghost.h"
 #include "Simon.h"
-
-#include "AppConfiguration.h"
-
 
 
 #define WINDOW_CLASS_NAME L"SampleWindow"
@@ -46,33 +40,26 @@
 #define ID_TEX_MARIO 0
 #define ID_TEX_ENEMY 10
 #define ID_TEX_MISC 20
-#define ID_TEX_BAT 40
-#define ID_TEX_GHOST 50
-#define ID_TEX_SIMON 60
+#define ID_TEX_SIMON 30
 
 #define TEXTURES_DIR L"textures"
-#define TEXTURE_PATH_BAT TEXTURES_DIR "\\bat.png"
-#define TEXTURE_PATH_GHOST TEXTURES_DIR "\\ghost.png"
 #define TEXTURE_PATH_MARIO TEXTURES_DIR "\\mario.png"
 #define TEXTURE_PATH_MISC TEXTURES_DIR "\\misc_transparent.png"
 #define TEXTURE_PATH_ENEMIES TEXTURES_DIR "\\enemies.png"
 #define TEXTURE_PATH_SIMON TEXTURES_DIR "\\simon.png"
 
 CMario *mario;
-
-CEnemy* enemy;
-#define ENEMY_START_X 10.0f
-#define ENEMY_START_Y 150.0f
-#define ENEMY_START_VX 0.1f
-#define ENEMY_START_VY 0.1f
+#define MARIO_START_X 10.0f
+#define MARIO_START_Y 130.0f
+#define MARIO_START_VX 0.1f
 
 CBrick *brick;
-CBat* bat;
-CGhost* ghost;
-CSimon* simon;
-CWeapon* weapon;
-vector<LPGAMEOBJECT> objects;
 
+CSimon* simon;
+CSimon* simon2;
+#define SIMON_START_X 10.0f
+#define SIMON_START_Y 130.0f
+#define SIMON_START_VX 0.1f
 
 LRESULT CALLBACK WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -93,279 +80,91 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 */
 void LoadResources()
 {
-	CTextures* textures = CTextures::GetInstance();
-	CAnimations* animations = CAnimations::GetInstance();
-	LPANIMATION ani;
+	CTextures * textures = CTextures::GetInstance();
 
-	// textures->Add(ID_TEX_MARIO, TEXTURE_PATH_MARIO);
-	// textures->Add(ID_ENEMY_TEXTURE, TEXTURE_PATH_ENEMIES, D3DCOLOR_XRGB(156, 219, 239));
+	//textures->Add(ID_TEX_MARIO, TEXTURE_PATH_MARIO);
+	//textures->Add(ID_ENEMY_TEXTURE, TEXTURE_PATH_ENEMIES, D3DCOLOR_XRGB(156, 219, 239));
 	textures->Add(ID_TEX_MISC, TEXTURE_PATH_MISC);
-
-	textures->Add(ID_TEX_ENEMY, TEXTURE_PATH_ENEMIES);
-	textures->Add(ID_TEX_BAT, TEXTURE_PATH_BAT);
-
-	textures->Add(ID_TEX_GHOST, TEXTURE_PATH_GHOST);
 	textures->Add(ID_TEX_SIMON, TEXTURE_PATH_SIMON);
 
-	CSprites* sprites = CSprites::GetInstance();
 
-	{
-		textures->Add(ID_TEX_MARIO, TEXTURE_PATH_MARIO);
-		LPTEXTURE texMario = textures->Get(ID_TEX_MARIO);
-
-		// readline => id, left, top, right 
-
-		//MARIO LEFT
-		sprites->Add(10001, 246, 154, 259, 181, texMario);
-		sprites->Add(10002, 275, 154, 290, 181, texMario);
-		sprites->Add(10003, 304, 154, 321, 181, texMario);
-
-		// MARIO RIGHT
-		sprites->Add(10011, 186, 154, 200, 181, texMario);
-		sprites->Add(10012, 155, 154, 171, 181, texMario);
-		sprites->Add(10013, 125, 154, 141, 181, texMario);
-
-		ani = new CAnimation(100);
-		ani->Add(10001);
-		ani->Add(10002);
-		ani->Add(10003);
-		animations->Add(500, ani);
-
-
-		ani = new CAnimation(100);
-		ani->Add(10011);
-		ani->Add(10012);
-		ani->Add(10013);
-		animations->Add(501, ani);
-
-		mario = new CMario(MARIO_START_X, MARIO_START_Y, MARIO_START_VX, MARIO_START_VY);
-		objects.push_back(mario);
-	}
-
-
-	// MISC
-	{
-		textures->Add(ID_TEX_MISC, TEXTURE_PATH_MISC);
-
-		LPTEXTURE texMisc = textures->Get(ID_TEX_MISC);
-		sprites->Add(20001, 300, 117, 317, 133, texMisc);
-		sprites->Add(20002, 318, 117, 335, 133, texMisc);
-		sprites->Add(20003, 336, 117, 353, 133, texMisc);
-		sprites->Add(20004, 354, 117, 371, 133, texMisc);
-
-		ani = new CAnimation(100);
-		ani->Add(20001, 1000);
-		ani->Add(20002);
-		ani->Add(20003);
-		ani->Add(20004);
-		animations->Add(510, ani);
-	}
-
-
-	// ENEMY
-	{
-		LPTEXTURE texEnemy = textures->Get(ID_TEX_ENEMY);
-		sprites->Add(30001, 90, 178, 105, 202, texEnemy);
-		sprites->Add(30002, 66, 178, 81, 202, texEnemy);
-		//sprites->Add(30003, 36, 173, 60, 202, texEnemy);
-		//sprites->Add(30004, 7, 173, 31, 202, texEnemy);
-
-		ani = new CAnimation(100);
-		ani->Add(30001);
-		ani->Add(30002);
-
-		//ani->Add(30003);
-		//ani->Add(30004);
-		//animations->Add(300, ani);
-		enemy = new CEnemy(ENEMY_START_X, ENEMY_START_Y, ENEMY_START_VX, ENEMY_START_VY);
-		objects.push_back(enemy);
-	}
-
-	// BAT
-	{
-		LPTEXTURE texBat = textures->Get(ID_TEX_BAT);
-		sprites->Add(40001, 98, 0, 127, 31, texBat);
-		sprites->Add(40002, 64, 0, 93, 31, texBat);
-
-
-
-
-		ani = new CAnimation(100);
-		ani->Add(40001);
-		ani->Add(40002);
-		animations->Add(BAT_ANI_FLY_LEFT, ani);
-
-		bat = new CBat(BAT_START_X, BAT_START_Y, -BAT_START_VX, BAT_START_VY);
-		objects.push_back(bat);
-	}
-
-
-	{
-		LPTEXTURE texGhost = textures->Get(ID_TEX_GHOST);
-		sprites->Add(50001, 36, 0, 67, 63, texGhost);
-		sprites->Add(50002, 0, 0, 32, 63, texGhost);
-
-		ani = new CAnimation(100);
-		ani->Add(50001);
-		ani->Add(50002);
-		animations->Add(300, ani);
-	}
-
-
-
-	/*mario = new CMario(MARIO_START_X, MARIO_START_Y, MARIO_START_VX, MARIO_START_VY);
-
-	brick = new CBrick(100.0f, 100.0f);
-	enemy = new CEnemy(ENEMY_START_X, ENEMY_START_Y, ENEMY_START_VX, ENEMY_START_VY);
-	bat = new CBat(BAT_START_X, BAT_START_Y, -BAT_START_VX, BAT_START_VY);*/
-
-	//ghost = new CGhost(GHOST_START_X, GHOST_START_Y, GHOST_START_VX, GHOST_START_VY);
-
-	// SIMON
-	{
-		LPTEXTURE texSimon = textures->Get(ID_TEX_SIMON);
-
-		// WALK RIGHT
-		sprites->Add(10101, 1519, 21, 1534, 53, texSimon);
-		sprites->Add(10102, 1536, 21, 1551, 53, texSimon);
-		sprites->Add(10103, 1553, 21, 1568, 53, texSimon);
-
-		// WALK LEFT
-		sprites->Add(10111, 29, 21, 44, 53, texSimon);
-		sprites->Add(10112, 46, 21, 61, 53, texSimon);
-		sprites->Add(10113, 63, 21, 78, 53, texSimon);
-
-		// IDLE RIGHT
-		sprites->Add(10121, 1581, 21, 1596, 53, texSimon);
-
-		// IDLE LEFT
-		sprites->Add(10131, 1, 21, 16, 53, texSimon);
-
-		// JUMP/DUCK RIGHT
-		sprites->Add(10141, 1498, 21, 1513, 46, texSimon);
-
-		// JUMP/DUCK LEFT
-		sprites->Add(10151, 84, 21, 99, 46, texSimon);
-
-		// STAND ATTACK RIGHT
-		sprites->Add(10161, 1573, 79, 1596, 108, texSimon);
-		sprites->Add(10162, 1556, 79, 1571, 108, texSimon);
-		sprites->Add(10163, 1531, 79, 1552, 108, texSimon);
-
-		// STAND ATTACK LEFT
-		sprites->Add(10171, 1, 79, 24, 108, texSimon);
-		sprites->Add(10172, 26, 79, 41, 108, texSimon);
-		sprites->Add(10173, 45, 79, 66, 108, texSimon);
-
-		// SIT ATTACK RIGHT
-		sprites->Add(10181, 1427, 79, 1450, 101, texSimon);
-		sprites->Add(10182, 1410, 79, 1425, 101, texSimon);
-		sprites->Add(10183, 1385, 79, 1406, 101, texSimon);
-
-		// SIT ATTACK LEFT
-		sprites->Add(10191, 147, 79, 170, 101, texSimon);
-		sprites->Add(10192, 172, 79, 187, 101, texSimon);
-		sprites->Add(10193, 191, 79, 212, 101, texSimon);
-
-		LPANIMATION ani;
-
-		ani = new CAnimation(100);
-		ani->Add(10101);
-		ani->Add(10102);
-		ani->Add(10103);
-		animations->Add(ID_ANI_SIMON_WALKING_RIGHT, ani);
-
-		ani = new CAnimation(100);
-		ani->Add(10111);
-		ani->Add(10112);
-		ani->Add(10113);
-		animations->Add(ID_ANI_SIMON_WALKING_LEFT, ani);
-
-		ani = new CAnimation(100);
-		ani->Add(10121);
-		animations->Add(ID_ANI_SIMON_IDLE_RIGHT, ani);
-
-		ani = new CAnimation(100);
-		ani->Add(10131);
-		animations->Add(ID_ANI_SIMON_IDLE_LEFT, ani);
-
-		ani = new CAnimation(100);
-		ani->Add(10141);
-		animations->Add(ID_ANI_SIMON_SIT_RIGHT, ani);
-
-		ani = new CAnimation(100);
-		ani->Add(10151);
-		animations->Add(ID_ANI_SIMON_SIT_LEFT, ani);
-
-		ani = new CAnimation(300);
-		ani->Add(10161);
-		ani->Add(10162);
-		ani->Add(10163);
-		animations->Add(ID_ANI_SIMON_STAND_ATTACK_RIGHT, ani);
-
-		ani = new CAnimation(300);
-		ani->Add(10171);
-		ani->Add(10172);
-		ani->Add(10173);
-		animations->Add(ID_ANI_SIMON_STAND_ATTACK_LEFT, ani);
-
-		ani = new CAnimation(300);
-		ani->Add(10181);
-		ani->Add(10182);
-		ani->Add(10183);
-		animations->Add(ID_ANI_SIMON_SIT_ATTACK_RIGHT, ani);
-
-		ani = new CAnimation(300);
-		ani->Add(10191);
-		ani->Add(10192);
-		ani->Add(10193);
-		animations->Add(ID_ANI_SIMON_SIT_ATTACK_LEFT, ani);
-
-		simon = new CSimon(SIMON_START_X, SIMON_START_Y);
-		CGame::GetInstance()->InitKeyboard(simon);
-		objects.push_back(simon);
-	}
+	CSprites * sprites = CSprites::GetInstance();
 	
+	LPTEXTURE texSimon = textures->Get(ID_TEX_SIMON);
 
-	// WEAPON
-	{
-		LPTEXTURE texSimon = textures->Get(ID_TEX_SIMON);
+	sprites->Add(10031, 1519, 21, 1534, 52, texSimon);
+	sprites->Add(10032, 1536, 21, 1551, 52, texSimon);
+	sprites->Add(10033, 1553, 21, 1568, 52, texSimon);
 
-		// WEAPON_LEFT
-		sprites->Add(20101, 1, 485, 8, 508, texSimon);
-		sprites->Add(20102, 10, 482, 26, 500, texSimon);
-		sprites->Add(20103, 27, 485, 51, 493, texSimon);
+	sprites->Add(10041, 29, 21, 44, 52, texSimon);
+	sprites->Add(10042, 46, 21, 61, 52, texSimon);
+	sprites->Add(10043, 63, 21, 78, 52, texSimon);
 
-		// WEAPON_RIGHT
-		sprites->Add(20111, 1588, 485, 1595, 508, texSimon);
-		sprites->Add(20112, 1572, 482, 1586, 500, texSimon);
-		sprites->Add(20113, 1547, 485, 1571, 493, texSimon);
+	CAnimations* animations = CAnimations::GetInstance();
+	LPANIMATION aniSimon;
 
-		// WEAPON_IDLE
-		sprites->Add(20211, 1572, 482, 1586, 500, texSimon);
+	aniSimon = new CAnimation(100);
+	aniSimon->Add(10031);
+	aniSimon->Add(10032);
+	aniSimon->Add(10033);
+	animations->Add(540, aniSimon);
+
+	aniSimon = new CAnimation(100);
+	aniSimon->Add(10041);
+	aniSimon->Add(10042);
+	aniSimon->Add(10043);
+	animations->Add(541, aniSimon);
 
 
-		LPANIMATION ani;
+	//LPTEXTURE texMario = textures->Get(ID_TEX_MARIO);
 
-		ani = new CAnimation(300);
-		ani->Add(20101);
-		ani->Add(20102);
-		ani->Add(20103);
-		animations->Add(ID_ANI_WEAPON_LEFT, ani);
+	//// readline => id, left, top, right 
 
-		ani = new CAnimation(300);
-		ani->Add(20111);
-		ani->Add(20112);
-		ani->Add(20113);
-		animations->Add(ID_ANI_WEAPON_RIGHT, ani);
+	//sprites->Add(10001, 246, 154, 259, 181, texMario);
+	//sprites->Add(10002, 275, 154, 290, 181, texMario);
+	//sprites->Add(10003, 304, 154, 321, 181, texMario);
 
-		ani = new CAnimation(100);
-		ani->Add(20211);
-		animations->Add(ID_ANI_WEAPON_IDLE, ani);
+	//sprites->Add(10011, 186, 154, 200, 181, texMario);
+	//sprites->Add(10012, 155, 154, 171, 181, texMario);
+	//sprites->Add(10013, 125, 154, 141, 181, texMario);
 
-		weapon = new CWeapon(SIMON_START_X, SIMON_START_Y);
-		objects.push_back(weapon);
-	}
+	//CAnimations * animations = CAnimations::GetInstance();
+	//LPANIMATION ani;
+
+	//ani = new CAnimation(100);
+	//ani->Add(10001);
+	//ani->Add(10002);
+	//ani->Add(10003);
+	//animations->Add(500, ani);
+
+
+
+	//ani = new CAnimation(100);
+	//ani->Add(10011);
+	//ani->Add(10012);
+	//ani->Add(10013);
+	//animations->Add(501, ani);
+
+
+
+	//LPTEXTURE texMisc = textures->Get(ID_TEX_MISC);
+	//sprites->Add(20001, 300, 117, 317, 133, texMisc);
+	//sprites->Add(20002, 318, 117, 335, 133, texMisc);
+	//sprites->Add(20003, 336, 117, 353, 133, texMisc);
+	//sprites->Add(20004, 354, 117, 371, 133, texMisc);
+
+	//ani = new CAnimation(100);
+	//ani->Add(20001,1000);
+	//ani->Add(20002);
+	//ani->Add(20003);
+	//ani->Add(20004);
+	//animations->Add(510, ani);
+	
+	
+	//mario = new CMario(MARIO_START_X, MARIO_START_Y, MARIO_START_VX);
+	brick = new CBrick(100.0f, 100.0f);
+	simon = new CSimon(SIMON_START_X, SIMON_START_Y, SIMON_START_VX);
+	simon2 = new CSimon(SIMON_START_X, SIMON_START_Y - 32, SIMON_START_VX);
 }
 
 /*
@@ -374,10 +173,9 @@ void LoadResources()
 */
 void Update(DWORD dt)
 {
-	for (int i = 0; i < (int)objects.size(); i++)
-	{
-		objects[i]->Update(dt);
-	}
+	//mario->Update(dt);
+	simon->Update(dt);
+	simon2->Update(dt);
 }
 
 void Render()
@@ -400,11 +198,10 @@ void Render()
 		FLOAT NewBlendFactor[4] = { 0,0,0,0 };
 		pD3DDevice->OMSetBlendState(g->GetAlphaBlending(), NewBlendFactor, 0xffffffff);
 
-		for (int i = 0; i < (int)objects.size(); i++)
-		{
-			objects[i]->Render();
-		}
-		//ghost->Render();
+		//brick->Render();
+		//mario->Render();
+		simon->Render();
+		simon2->Render();
 
 		// Uncomment this line to see how to draw a porttion of a texture  
 		//g->Draw(10, 10, texMisc, 300, 117, 316, 133);
@@ -509,7 +306,7 @@ int WINAPI WinMain(
 	HWND hWnd = CreateGameWindow(hInstance, nCmdShow, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	CGame *game = CGame::GetInstance();
-	game->Init(hWnd, hInstance);
+	game->Init(hWnd);
 
 	LoadResources();
 

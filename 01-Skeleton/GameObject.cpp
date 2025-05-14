@@ -5,7 +5,7 @@
 #include "GameObject.h"
 
 /*
-	Initialize game object 
+	Initialize game object
 */
 CGameObject::CGameObject(float x, float y, LPTEXTURE tex)
 {
@@ -29,35 +29,38 @@ CGameObject::~CGameObject()
 
 void CMario::Update(DWORD dt)
 {
-	x += vx*dt;
+	x += vx * dt;
 
 	int BackBufferWidth = CGame::GetInstance()->GetBackBufferWidth();
-	if (x <= MARIO_WIDTH || x >= BackBufferWidth - MARIO_WIDTH) {
-		
+	if (x <= 0 || x >= BackBufferWidth - MARIO_WIDTH) {
+
 		vx = -vx;
 
-		if (x <= MARIO_WIDTH)
+		if (x <= 0)
 		{
-			x = MARIO_WIDTH;
+			x = 0;
 		}
 		else if (x >= BackBufferWidth - MARIO_WIDTH)
 		{
 			x = (float)(BackBufferWidth - MARIO_WIDTH);
 		}
 	}
+}
 
-	y += vy * dt;
-	
-	int BackBufferHeight = CGame::GetInstance()->GetBackBufferHeight();
-	if (y <= MARIO_WIDTH || y >= BackBufferHeight - MARIO_WIDTH) {
-		vy = -vy;
-		if (y <= MARIO_WIDTH)
-		{
-			y = MARIO_WIDTH;
+#define SIMON_WIDTH 22
+
+void CSimon::Update(DWORD dt) {
+	x += vx * dt;
+
+	int backBufferWidth = CGame::GetInstance()->GetBackBufferWidth();
+	if (x <= 0 || x >= backBufferWidth - SIMON_WIDTH) {
+		vx = -vx;
+
+		if (x <= 0) {
+			x = 0;
 		}
-		else if (y >= BackBufferHeight - MARIO_WIDTH)
-		{
-			y = (float)(BackBufferHeight - MARIO_WIDTH);
+		else if (x >= backBufferWidth - SIMON_WIDTH) {
+			x = (float)(backBufferWidth - SIMON_WIDTH);
 		}
 	}
 }

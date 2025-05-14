@@ -1,5 +1,6 @@
-#include "QuadTree.h"
+#include "Quadtree.h"
 #include "Game.h"
+#include "debug.h"
 
 Quad::Quad(int _level, Point _topL, Point _botR)
     : level(_level), topLeft(_topL), botRight(_botR),
@@ -8,17 +9,17 @@ Quad::Quad(int _level, Point _topL, Point _botR)
 }
 
 Quad::~Quad() {
-    for (auto* obj : objs) {
-        delete obj;
-    }
-
     delete topLeftTree;
     delete topRightTree;
     delete botLeftTree;
     delete botRightTree;
+
+    for (auto* obj : objs) {
+        delete obj;
+    }
 }
 
-void Quad::devide() {
+void Quad::split() {
     int midX = (topLeft.x + botRight.x) / 2;
     int midY = (topLeft.y + botRight.y) / 2;
 
@@ -49,33 +50,17 @@ std::vector<int> Quad::getIndices(CGameObject* obj) const {
 void Quad::insert(CGameObject* obj) {
     if (obj == nullptr) return;
     if (obj->x < topLeft.x || obj->x > botRight.x || obj->y < topLeft.y || obj->y > botRight.y) {
-        return; // Object is outside
+        return; // Object is outside this quadrant
     }
 
     if (topLeftTree != nullptr) {
         std::vector<int> indices = getIndices(obj);
         for (int index : indices) {
             switch (index) {
-            case 0:
-            {
-                topLeftTree->insert(obj);
-                break;
-            }
-            case 1:
-            {
-                topRightTree->insert(obj);
-                break;
-            }
-            case 2:
-            {
-                botLeftTree->insert(obj);
-                break;
-            }
-            case 3:
-            {
-                botRightTree->insert(obj);
-                break;
-            }
+            case 0: topLeftTree->insert(obj); break;
+            case 1: topRightTree->insert(obj); break;
+            case 2: botLeftTree->insert(obj); break;
+            case 3: botRightTree->insert(obj); break;
             }
         }
         return;
@@ -84,7 +69,7 @@ void Quad::insert(CGameObject* obj) {
     objs.push_back(obj);
 
     if (objs.size() > MAX_OBJECTS && level < MAX_LEVELS) {
-        devide();
+        split();
         for (auto* obj : objs) {
             std::vector<int> indices = getIndices(obj);
             for (int index : indices) {
@@ -108,10 +93,8 @@ void Quad::retrieve(const Point& viewTopLeft, const Point& viewBotRight, std::ve
     }
 
     for (auto* obj : objs) {
-        if (obj->x >= viewTopLeft.x && 
-            obj->y >= viewTopLeft.y && 
-            obj->y <= viewBotRight.y &&
-            obj->x <= viewBotRight.x) {
+        if (obj->x >= viewTopLeft.x && obj->x <= viewBotRight.x &&
+            obj->y >= viewTopLeft.y && obj->y <= viewBotRight.y) {
             foundObjects.push_back(obj);
         }
     }
@@ -133,16 +116,17 @@ void Quad::Update(DWORD dt) {
 void Quad::Render() {
     CGame* game = CGame::GetInstance();
     float cx, cy;
-    game->GetCamPos(cx, cy);
-
+    game->GetCamera()->GetPosition(cx, cy);
     int screenWidth = game->GetBackBufferWidth();
     int screenHeight = game->GetBackBufferHeight();
 
     std::vector<CGameObject*> res;
-    retrieve(Point(max(0.0f, cx - 25), max(0.0f, cy - 25)),
-        Point(cx + screenWidth + 25, 25 + cy + screenHeight), res);
-
+    retrieve(Point(max(0.0f, cx - 50), max(0.0f, cy - 50)),
+        Point(cx + screenWidth + 50, 50 + cy + screenHeight), res);
+    int cnt = 0;
     for (auto* obj : res) {
         obj->Render();
+        cnt++;
     }
+    //DebugOut(L"[INFO] The Number Of Current Objects Rendered: %d\n", cnt);
 }

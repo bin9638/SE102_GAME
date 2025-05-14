@@ -24,7 +24,6 @@
     <ProjectGuid>{30b52332-21ee-43b1-91bf-b2494c04c34f}</ProjectGuid>
     <RootNamespace>My05SceneManager</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>DoAn</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

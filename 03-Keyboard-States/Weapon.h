@@ -1,35 +1,43 @@
-#pragma once
+﻿#pragma once
 #include "GameObject.h"
+#include "Simon.h"
 
-#include "Animation.h"
-#include "Animations.h"
+#define ID_ANI_WEAPON_RIGHT 10420250001
+#define ID_ANI_WEAPON_LEFT 10420250002
+#define ID_ANI_WEAPON_IDLE  10420250003
 
-#include "debug.h"
-#include "Game.h"
+#define ID_ANI_WEAPON_KNIFE_RIGHT 10420250004
+#define ID_ANI_WEAPON_KNIFE_LEFT 10420250005
 
-#define Y_TO_MARIO -50
-#define LEFT_X_TO_MARIO -10
-#define RIGHT_X_TO_MARIO 10
+#define ID_ANI_WEAPON_BOOMERANG_RIGHT 10420250006
+#define ID_ANI_WEAPON_BOOMERANG_LEFT 10420250007
 
-#pragma region ANIMATION_ID
-
-#define ID_ANI_WEAPON_LEFT 2000
-#define ID_ANI_WEAPON_RIGHT 2001
-#define ID_ANI_WEAPON_IDLE 2002
-
-#pragma endregion
 
 class CWeapon : public CGameObject
 {
+    friend class AttackState;
 protected:
-	int curStep = -1;
-	int lastStepTime = 0;
-	int dx[4], dy[4];
+	float attackTime; // thời gian giới hạn 
+    bool isActive;       // Trạng thái weapon có đang hoạt động không
+    //int nx;              // hướng của weapon (theo hướng Simon)
+    DWORD activeTime;    // thời gian tồn tại của weapon
 public:
-	CWeapon(float x, float y) : CGameObject(x, y) { }
-	void Update(DWORD dt);
-	void Render(int isAttacking, int nx);
-	void Render();
-	void SetDxDy(float X, float Y);
-};	
+    CWeapon(float x, float y, int nx) : CGameObject(x, y, nx) {
+        isActive = true;
+        activeTime = 0;
+    }
 
+    virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) = 0;
+    virtual void Render() = 0;
+    virtual void UpdatePosition(float simon_x, float simon_y, int aniId, int frame, DWORD dt) = 0;
+
+    bool IsActive() const { return isActive; }
+    void SetInactive() { isActive = false; }
+
+    void GetBoundingBox(float& left, float& top, float& right, float& bottom) {
+        left = x;
+        top = y;
+        right = x + 16;
+        bottom = y + 8;
+    }
+};

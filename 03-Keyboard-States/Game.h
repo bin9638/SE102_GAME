@@ -9,10 +9,10 @@
 #include "Texture.h"
 #include "KeyEventHandler.h"
 
-#define MAX_FRAME_RATE 60
+#define MAX_FRAME_RATE 180
 #define KEYBOARD_BUFFER_SIZE 1024
 #define KEYBOARD_STATE_SIZE 256
-
+#include "Camera.h"
 
 /*
 	Our simple game framework
@@ -29,9 +29,9 @@ class CGame
 	IDXGISwapChain* pSwapChain = NULL;
 	ID3D10RenderTargetView* pRenderTargetView = NULL;
 	ID3D10BlendState* pBlendStateAlpha = NULL;			// To store alpha blending state
-	
+
 	LPD3DX10SPRITE spriteObject;						// Sprite handling object, BIG MYSTERY: it has to be in this place OR will lead to access violation in D3D11.dll ????
-	
+
 	LPDIRECTINPUT8       di;		// The DirectInput object         
 	LPDIRECTINPUTDEVICE8 didv;		// The keyboard device 
 
@@ -39,6 +39,8 @@ class CGame
 	DIDEVICEOBJECTDATA keyEvents[KEYBOARD_BUFFER_SIZE];		// Buffered keyboard data
 
 	LPKEYEVENTHANDLER keyHandler;
+	
+	Camera* camera;
 
 	float cam_x = 0.0f;
 	float cam_y = 0.0f;
@@ -47,22 +49,22 @@ class CGame
 
 public:
 	// Init DirectX, Sprite Handler
-	void Init(HWND hWnd,HINSTANCE hInstance);
+	void Init(HWND hWnd, HINSTANCE hInstance);
 
 	//
 	// Draw a portion or ALL the texture at position (x,y) on the screen
 	// rect : if NULL, the whole texture will be drawn
 	//        if NOT NULL, only draw that portion of the texture 
-	void Draw(float x, float y, LPTEXTURE tex, RECT* rect = NULL);
+	void Draw(float x, float y, LPTEXTURE tex, RECT* rect = NULL, float alpha = 1.0f);
 
-	void Draw(float x, float y, LPTEXTURE tex, int l, int t, int r, int b)
+	void Draw(float x, float y, LPTEXTURE tex, int l, int t, int r, int b, float alpha = 1.0f)
 	{
 		RECT rect;
 		rect.left = l;
 		rect.top = t;
 		rect.right = r;
 		rect.bottom = b;
-		this->Draw(x, y, tex, &rect);
+		this->Draw(x, y, tex, &rect, alpha);
 	}
 
 	LPTEXTURE LoadTexture(LPCWSTR texturePath);
@@ -87,6 +89,7 @@ public:
 
 	void SetCamPos(float x, float y) { cam_x = x; cam_y = y; }
 	void GetCamPos(float& x, float& y) { x = cam_x; y = cam_y; }
+	Camera* GetCamera() { return this->camera; }
 
 	~CGame();
 };

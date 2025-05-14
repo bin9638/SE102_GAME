@@ -128,58 +128,36 @@
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Animations.cpp" />
-    <ClCompile Include="Bat.cpp" />
     <ClCompile Include="debug.cpp" />
-    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="Ghost.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mario.cpp" />
     <ClCompile Include="Simon.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="Sprites.cpp" />
     <ClCompile Include="Textures.cpp" />
-    <ClCompile Include="Weapon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h" />
     <ClInclude Include="AnimationFrame.h" />
     <ClInclude Include="Animations.h" />
-    <ClInclude Include="AppConfiguration.h" />
-    <ClInclude Include="Bat.h" />
     <ClInclude Include="debug.h" />
-    <ClInclude Include="Enemy.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
-    <ClInclude Include="Ghost.h" />
-    <ClInclude Include="KeyEventHandler.h" />
     <ClInclude Include="Mario.h" />
-    <ClInclude Include="SampleKeyEventHandler.h" />
     <ClInclude Include="Simon.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Sprites.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Textures.h" />
-    <ClInclude Include="Weapon.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="textures\enemy\1.png" />
-    <Image Include="textures\enemy\2.png" />
-    <Image Include="textures\enemy\3.png" />
-    <Image Include="textures\enemy\4.png" />
-    <Image Include="textures\enemy\5.png" />
-    <Image Include="textures\enemy\6.png" />
-    <Image Include="textures\enemy\7.png" />
-    <Image Include="textures\enemy\8.png" />
-    <Image Include="textures\enemy\9.png" />
-    <Image Include="textures\enemy\bat.png" />
-    <Image Include="textures\enemy\ghost.png" />
     <Image Include="textures\mario.png" />
+    <Image Include="textures\simon.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="textures\enemy\Thumbs.db" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

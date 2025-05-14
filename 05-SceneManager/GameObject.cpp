@@ -40,4 +40,5 @@ void CGameObject::RenderBoundingBox()
 
 CGameObject::~CGameObject()
 {
+
 }

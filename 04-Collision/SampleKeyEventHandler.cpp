@@ -6,27 +6,14 @@
 #include "Mario.h"
 
 extern CMario* mario;
-extern void Reload();
 
 void CSampleKeyHandler::OnKeyDown(int KeyCode)
 {
 	DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
 	switch (KeyCode)
 	{
-	case DIK_DOWN:
-		mario->SetState(MARIO_STATE_SIT);
-		break;
 	case DIK_S:
 		mario->SetState(MARIO_STATE_JUMP);
-		break;
-	case DIK_1:
-		mario->SetLevel(MARIO_LEVEL_SMALL);
-		break;
-	case DIK_2:
-		mario->SetLevel(MARIO_LEVEL_BIG);
-		break;
-	case DIK_R: // reset
-		Reload();
 		break;
 	}
 }
@@ -36,7 +23,6 @@ void CSampleKeyHandler::OnKeyUp(int KeyCode)
 	DebugOut(L"[INFO] KeyUp: %d\n", KeyCode);
 	switch (KeyCode)
 	{
-
 	case DIK_S:
 		mario->SetState(MARIO_STATE_RELEASE_JUMP);
 		break;
@@ -66,4 +52,11 @@ void CSampleKeyHandler::KeyState(BYTE *states)
 	}
 	else
 		mario->SetState(MARIO_STATE_IDLE);
+	
+	// Sitting state has higher priority 
+	if (game->IsKeyDown(DIK_DOWN))
+	{
+		mario->SetState(MARIO_STATE_SIT);
+	}
+
 }

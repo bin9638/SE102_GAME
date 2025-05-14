@@ -1,13 +1,10 @@
 #include "Game.h"
 #include "Mario.h"
 
-CMario::CMario(float x, float y, float vx, float vy) 
+CMario::CMario(float x, float y, float vx):CGameObject(x, y)
 {
-	this->x = x;
-	this->y = y;
 	this->vx = vx;
-	this->vy = vy;
-}
+};
 
 void CMario::Update(DWORD dt)
 {
@@ -38,11 +35,6 @@ void CMario::Render()
 	else ani = CAnimations::GetInstance()->Get(501);
 
 	ani->Render(x, y);
-}
-
-CBrick::CBrick(float x, float y) {
-	this->x = x;
-	this->y = y;
 }
 
 void CBrick::Render() {

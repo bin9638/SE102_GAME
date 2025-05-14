@@ -1,16 +1,16 @@
 /* =============================================================
 	INTRODUCTION TO GAME PROGRAMMING SE102
-	
-	SAMPLE 01 - SKELETON CODE 
+
+	SAMPLE 01 - SKELETON CODE
 
 	This sample illustrates how to:
 
 	1/ Re-organize introductory code to an initial skeleton for better scalability
 	2/ CGame is a singleton, playing a role of an "engine".
 	3/ CGameObject is an abstract class for all game objects
-	4/ CTexture is a wrapper class for ID3D10TEXTURE 
-	
-	NOTE: to create transparent background, download GIMP, then use Color to Alpha feature 
+	4/ CTexture is a wrapper class for ID3D10TEXTURE
+
+	NOTE: to create transparent background, download GIMP, then use Color to Alpha feature
 ================================================================ */
 
 #include <windows.h>
@@ -28,6 +28,7 @@
 
 #define TEXTURE_PATH_BRICK L"brick.png"
 #define TEXTURE_PATH_MARIO L"mario.png"
+#define TEXTURE_PATH_SIMON L"normal_simon.png"
 
 #define TEXTURE_PATH_MISC L"misc.png"
 
@@ -38,19 +39,27 @@
 
 using namespace std;
 
-CMario* mario1, * mario2;
+CMario* mario;
 #define MARIO_START_X 10.0f
 #define MARIO_START_Y 100.0f
 #define MARIO_START_VX 0.1f
 #define MARIO_START_VY 0.1f
 
 
-CBrick *brick;
+CBrick* brick;
+vector<CBrick*> bricks;
 #define BRICK_X 10.0f
 #define BRICK_Y 120.0f
 
+CSimon* simon;
+#define SIMON_START_X 10.0f
+#define SIMON_START_Y 84.0f
+#define SIMON_START_VX 0.1f
+#define SIMON_START_VY 0.1f
+
 LPTEXTURE texMario = NULL;
 LPTEXTURE texBrick = NULL;
+LPTEXTURE texNormalSimon = NULL;
 LPTEXTURE texMisc = NULL;
 
 //vector<LPGAMEOBJECT> objects;  
@@ -73,19 +82,26 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 */
 void LoadResources()
 {
-	CGame * game = CGame::GetInstance();
+	CGame* game = CGame::GetInstance();
 	texBrick = game->LoadTexture(TEXTURE_PATH_BRICK);
 	texMario = game->LoadTexture(TEXTURE_PATH_MARIO);
+	texNormalSimon = game->LoadTexture(TEXTURE_PATH_SIMON);
 	texMisc = game->LoadTexture(TEXTURE_PATH_MISC);
 
 	// Load a sprite sheet as a texture to try drawing a portion of a texture. See function Render 
 	//texMisc = game->LoadTexture(MISC_TEXTURE_PATH);
 
-	mario1 = new CMario(MARIO_START_X, MARIO_START_Y, MARIO_START_VX, MARIO_START_VY  * 0, texMario);
-	mario2 = new CMario(MARIO_START_X, MARIO_START_Y + 50, MARIO_START_VX * 0, MARIO_START_VY, texMario);
+	//mario = new CMario(MARIO_START_X, MARIO_START_Y, MARIO_START_VX, MARIO_START_VY, texMario);
 	brick = new CBrick(BRICK_X, BRICK_Y, texBrick);
+	simon = new CSimon(SIMON_START_X, SIMON_START_Y, SIMON_START_VX, SIMON_START_VY, texNormalSimon);
 
-	
+	int x = BRICK_X;
+	for (int i = 0; i < 20; i++) {
+		brick = new CBrick(x, BRICK_Y, texBrick);
+		x += 16;
+		bricks.push_back(brick);
+	}
+
 	// objects.push_back(mario);
 	// for(i)		 
 	//		objects.push_back(new CGameObject(BRICK_X+i*BRICK_WIDTH,....);
@@ -109,15 +125,17 @@ void Update(DWORD dt)
 		objects[i]->Update(dt);
 	*/
 
-	mario1->Update(dt);
-	mario2->Update(dt);
-	brick->Update(dt);
+	//mario->Update(dt);
+	for (auto& brick : bricks) {
+		brick->Update(dt);
+	}
+	simon->Update(dt);
 
 	//DebugOutTitle(L"01 - Skeleton %0.1f, %0.1f", mario->GetX(), mario->GetY());
 }
 
 /*
-	Render a frame 
+	Render a frame
 */
 void Render()
 {
@@ -139,9 +157,11 @@ void Render()
 		FLOAT NewBlendFactor[4] = { 0,0,0,0 };
 		pD3DDevice->OMSetBlendState(g->GetAlphaBlending(), NewBlendFactor, 0xffffffff);
 
-		// brick->Render();
-		mario1->Render();
-		mario2->Render();
+		for (auto& brick : bricks) {
+			brick->Render();
+		}
+		//mario->Render();
+		simon->Render();
 
 		// Uncomment this line to see how to draw a porttion of a texture  
 		//g->Draw(10, 10, texMisc, 300, 117, 317, 134);
@@ -186,7 +206,7 @@ HWND CreateGameWindow(HINSTANCE hInstance, int nCmdShow, int ScreenWidth, int Sc
 			hInstance,
 			NULL);
 
-	if (!hWnd) 
+	if (!hWnd)
 	{
 		DWORD ErrCode = GetLastError();
 		DebugOut(L"[ERROR] CreateWindow failed! ErrCode: %d\nAt: %s %d \n", ErrCode, _W(__FILE__), __LINE__);
@@ -242,11 +262,11 @@ int WINAPI WinMain(
 	_In_opt_ HINSTANCE hPrevInstance,
 	_In_ LPSTR lpCmdLine,
 	_In_ int nCmdShow
-) 
+)
 {
 	HWND hWnd = CreateGameWindow(hInstance, nCmdShow, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-	CGame * game = CGame::GetInstance();
+	CGame* game = CGame::GetInstance();
 	game->Init(hWnd);
 
 	SetWindowPos(hWnd, 0, 0, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
